@@ -266,6 +266,196 @@ val price = """
 """
 ```
 
+- #### 控制流(if, when, for, while)
+##### if的使用
+```kotlin
+// 1.if作为语句(statement)
+var max: Int
+if (a < b) {
+    max = b
+} else {
+    max = a
+}
+
+// 2.if作为表示式(expression)
+val max = if (a > b) a else b
+
+// if 的分支如果是块(block),那么最后一个表达式就是这个块的值
+val max = if (a > b) {
+    print("Choose a")
+    a
+} else {
+    print("Choose b")
+    b
+}
+```
+
+##### when的使用
+其实`when`就是其他语言里面的`switch`
+```kotlin
+when (x) {
+    1 -> print("x == 1")     // 可以看见不需要加break
+    2 -> print("x == 2")
+    else -> {
+        print("x 不是1 也不是2")
+    }   
+}
+
+// switch / when 的穿透
+when (x) {
+    0, 1 -> print("x == 0 or x == 1")
+    else -> print("其他")
+}
+
+// 箭头左边的也不一定就是常数0或者1这种
+when (s) {
+    parseInt(s) -> print("s encodes x")
+    else -> print("s does not encode x")
+}
+
+// 也可以在箭头左边查看值是否在某个集合或者某个范围里面
+when (x) {
+    in 1..10 -> print("x is in the range")
+    in validNumbers -> print("x is valid")
+    !in 10..20 -> print("x is outside the range")
+    else -> print("none of the above")
+}
+
+// 另一种用法: 用来检查一个值是否是某种特定类型, 这其中会有个smart casts机制
+fun hasPrefix(x: Any) = when(x) {
+    is String -> x.startsWith("prefix") // smart casts机制, x是String类型的时候可以直接用String的方法
+    else -> false
+}
+
+// 既然是相当于switch,就可以替代if-else-if语句链
+// 注意下面演示的when后面没有参数
+when {
+    x.isOdd() -> print("x is odd")
+    y.isEven() -> print("y is even")
+    else -> print("x+y is odd")
+}
+
+// 自从kotlin 1.3开始, 使用下面的语法就可以得到when中的变量
+fun Request.getBody() =
+    when (val response = executeRequest()) {
+        is Success -> response.body
+        is HttpError -> throw HttpException(response.status)
+    }
+```
+
+##### for的使用
+```kotlin
+for (item in collection) print(item)
+
+for (item: Int in ints) {
+    // ...
+}
+
+// 遍历一组正序数字
+for (i in 1..3) {
+    print(i)
+}
+// 遍历一组逆序数字,间隔为2
+for (i in 6 downTo 0 step 2) {
+    print(i)
+}
+// 通过索引方式遍历数组
+for (index in array.indices) {
+    print(array[index])
+}
+// 按照索引方式还有另一种方式
+for ((index, value) in array.withIndex()) {
+    println("the element at $index is $value")
+}
+```
+
+##### while的使用
+两种: `while` 和 `do..while`
+```kotlin
+while (x > 0) {
+    x--
+}
+
+do {
+    val y = retriveData()
+} while (y != null)
+
+```
+
+- #### (返回和跳转) Returns and Jumps
+kotlin有三种结构化跳转语句: return 、 break 和 continue
+```kotlin
+val s = person.name ?: return // 如果person.name没有提供, 那么s的值就会是一个Nothing类型 
+```
+[Nothing type](https://kotlinlang.org/docs/reference/exceptions.html#the-nothing-type)
+
+##### Break and Continue Labels
+用过`goto`语句的应该知道label,kotlin中的label的形式是`abc@`这样结尾跟着一个
+@的
+```kotlin
+// break 与 label的使用
+loop@ for (i in 1..100) {
+    for (j in 1..10) {
+        if (/**/) break@loop
+    }
+}
+
+
+// return 与 label的使用--0 // 一般return的使用
+fun foo() {
+    listOf(1, 2, 3, 4, 5).forEach {
+        if (it == 3) return  //直接退出整个foo()函数
+        print(it)
+    }
+    println("this point is unreachable")
+}
+// 输出结果: 12
+
+// return 与 label的使用--1
+fun foo() {
+    listOf(1,2,3,4,5).forEach lit@{ 
+        if (it == 3) return@lit
+        print(it)
+    }
+    print(" done with explicit label")
+}
+// 输出结果: 1245 done with explicit label
+
+// return 与 label的使用--2 使用隐式label
+fun foo() {
+    listOf(1,2,3,4,5).forEach { 
+        if (it == 3) return@forEach // 使用隐式label, 和函数同名,这样只会退出调用其的lambda函数
+        print(it)
+    }
+    print(" done with explicit label")
+}
+
+// return 与 label的使用--3 使用匿名函数代替lambda
+fun foo() {
+    listOf(1, 2, 3, 4, 5).forEach(fun(value: Int) {
+        if (value == 3) return //只会退出当前这个匿名函数
+        print(value)   
+    })
+    print("done with anonymous function")
+}
+// 输出结果: 1245 done with anonymous function
+
+// return 与 label的使用--4 return用出break的效果
+fun foo() {
+    run loop@{
+        listOf(1, 2, 3, 4, 5).forEach {
+            if (it == 3) return@loop
+            print(it)
+        }
+    }   
+    print(" done with nested loop")
+}
+
+// 最后一个
+return@a 1 // means return 1 at label @a
+```
+
+
 
 
 - #### data关键字 与数据类<br>
