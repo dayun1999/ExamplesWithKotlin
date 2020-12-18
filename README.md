@@ -1,4 +1,6 @@
 # ExamplesWithKotlin
+- [类和继承 Class and Inheritance](https://github.com/code4EE/ExamplesWithKotlin/blob/main/%E7%B1%BB%E5%92%8C%E7%BB%A7%E6%89%BF.md)
+
 ## Kotlin 的基本语法
 - #### var 和 val<br>
 `var` 和 `val`都是kotlin中声明变量的方式，区别是var声明为可变变量，
