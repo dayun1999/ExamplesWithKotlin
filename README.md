@@ -456,12 +456,3 @@ fun foo() {
 // 最后一个
 return@a 1 // means return 1 at label @a
 ```
-
-
-
-
-- #### data关键字 与数据类<br>
-举例，通常在User.java这样的类中我们存放的都是数据，
-```kotlin
-class User(var firstName: String?, var LastName: String?)
-```
